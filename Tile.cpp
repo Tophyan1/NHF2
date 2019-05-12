@@ -32,6 +32,7 @@ void Tile::sell(Player& player, std::string& itemName){
             player.getInventory().push_back(i);
             player.getGold() -= i.getPrice();
             this->inventory.erase((std::vector<Item>::iterator)&i);
+            return;
         }
     }
 }
