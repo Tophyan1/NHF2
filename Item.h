@@ -1,4 +1,3 @@
-
 #ifndef NHF2_ITEM_H
 #define NHF2_ITEM_H
 
@@ -13,7 +12,6 @@ enum ItemType {
     Weapon = 1,
     Potion = 2
 };
-
 /**
  * Class for items the Player can possess
  * */
@@ -27,12 +25,10 @@ private:
     unsigned int effect;
     ///Type of item
     ItemType type;
-
 public:
     ///Constructor
     Item(std::string name, unsigned int price = 0, unsigned int effect = 0, ItemType type = Potion) : name(std::move(name)), price(price),
                                                                                     effect(effect), type(type) {}
-
     ///Getter for name
     const std::string getName() const {
         return this->name;
@@ -47,9 +43,5 @@ public:
     }
     ///Default destructor
     ~Item() = default;
-
 };
-
-
-
 #endif //NHF2_ITEM_H

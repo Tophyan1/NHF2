@@ -11,7 +11,6 @@
 
 #include "Item.h"
 
-
 /**
  * Generic Entity
  * */
@@ -33,21 +32,16 @@ protected:
     Item armour;
     /// Currently used weapon
     Item weapon;
-
-
 public:
     ///Constructor
     Entity(std::string &name, int hp, unsigned int maxHp, unsigned int strength, unsigned int defense, int luck,
            Item &armour, Item &weapon) : name(std::move(name)), HP(hp), maxHP(maxHp), strength(strength),
                                                      defense(defense), luck(luck), armour(armour),
                                                      weapon(weapon){}
-
-
     ///Getter for name
     std::string & getName() {
         return this->name;
     }
-
     ///Getter/setter for HP
     int & getHp() {
         return this->HP;
@@ -78,8 +72,5 @@ public:
     }
     ///Default destructor
     virtual ~Entity() = default;
-
 };
-
-
 #endif //NHF2_ENTITY_H

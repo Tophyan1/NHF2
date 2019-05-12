@@ -31,10 +31,7 @@ void Game::battle() {
         std::cout << "You have won and killed this creature. Now tell Me, who is the monster now?" << std::endl;
         tile.getMonster().drop(player, generator);
     }
-
 }
-
-
 
 void Game::forward() {
     std::ifstream fin;
