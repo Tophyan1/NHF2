@@ -108,7 +108,7 @@ void Game::play(){
     std::cout << line;
     auto newTile = std::make_shared<Tile>(line);
     this->tile.reset(newTile.get());
-
+    fin.close();
 
     std::cout << "Welcome, hero!\n"
                  "Congratulations on being one! This is Your chance to prove that You are not in fact worthless." << std::endl;
@@ -164,5 +164,5 @@ void Game::play(){
     while (!std::regex_match(command, std::regex("(exit|exit +.*)", std::regex::icase)));
 
     std::cout << "You have exited the game. I wanted to play, but You surely have something better to do. Well, then. Goodbye!" << std::endl;
-    fin.close();
+
 }
