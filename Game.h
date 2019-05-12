@@ -19,18 +19,21 @@
 #include "Item.h"
 
 
-
+/***
+ *
+ * */
 class Game {
 private:
     Player player;
-    std::shared_ptr<Tile> tile;
+    Tile tile;
+    //std::shared_ptr<Tile> tile;
     std::mt19937 generator;
-   // std::vector<std::shared_ptr<Tile>> tileRef;
 
 public:
 
     ///Constructor
-    Game(Player &player) : player(std::move(player)), generator(std::mt19937(std::chrono::high_resolution_clock::now().time_since_epoch().count())) {
+    Game(Player &player) : player(player), tile(Tile("Init")),
+                            generator(std::mt19937(std::chrono::high_resolution_clock::now().time_since_epoch().count())) {
 
     }
 

@@ -10,14 +10,14 @@ void Game::battle() {
 
     std::uniform_int_distribution<int> dis (0, this->player.getLuck());
 
-    while (this->player.getHp() > 0 && this->tile->getMonster().getHp() > 0) {
+    while (this->player.getHp() > 0 && this->tile.getMonster().getHp() > 0) {
 
-        int playerAttack = player.getStrength() + player.getWeapon().getEffect() + dis(generator) - tile->getMonster().getDefense();
-        int monsterAttack = tile->getMonster().getStrength() - player.getDefense() - player.getArmour().getEffect();
+        int playerAttack = player.getStrength() + player.getWeapon().getEffect() + dis(generator) - tile.getMonster().getDefense();
+        int monsterAttack = tile.getMonster().getStrength() - player.getDefense() - player.getArmour().getEffect();
 
-        this->tile->getMonster().getHp() -= playerAttack;
+        this->tile.getMonster().getHp() -= playerAttack;
         std::cout << "You have inflicted " << playerAttack << " damage." << std::endl;
-        if (tile->getMonster().getHp() <= 0)
+        if (tile.getMonster().getHp() <= 0)
             break;
 
         player.getHp() -= monsterAttack;
@@ -29,7 +29,7 @@ void Game::battle() {
     }
     else {
         std::cout << "You have won and killed this creature. Now tell Me, who is the monster now?" << std::endl;
-        tile->getMonster().drop(player, generator);
+        tile.getMonster().drop(player, generator);
     }
 
 }
@@ -43,30 +43,27 @@ void Game::forward() {
     do {
         std::getline(fin, line);
     }
-    while (line != this->tile->getStory());
+    while (line != this->tile.getStory());
 
     std::getline(fin, line);
     if (line == "SHOP") {
-        std::cout << "Shop path runs" << std::endl;
         std::vector<Item> shopInventory;
         for (int i = 0; i < 3; ++i)
             shopInventory.emplace_back(Item("Potion", 200, 30));
         std::getline(fin, line);
-        this->tile.reset(new Tile(line, shopInventory));
+        this->tile = Tile(line, shopInventory);
 
     }
     else if (line == "MONSTER") {
-        std::cout << "Monster path runs" << std::endl;
         std::getline(fin, line);
         Item hand("Hand", 0, 0, Weapon), skin("Skin", 0, 0, Armour);
         std::string monsterName = "Scary Monster";
         auto newMonster = std::make_shared<Monster>(monsterName, 100, 100, 25, 10, 0, skin, hand);
-        this->tile.reset(new Tile(line, newMonster));
+        this->tile = Tile(line, newMonster);
     }
     else if (line == "NULL") {
-        std::cout << "Basic path runs" << std::endl;
         std::getline(fin, line);
-        this->tile.reset(new Tile(line));
+        this->tile = Tile(line);
     }
     else {
         std::cout << "End path runs" << std::endl;
@@ -80,7 +77,7 @@ void Game::forward() {
     }
     fin.close();
 
-    this->tile->tellStory();
+    this->tile.tellStory();
 }
 
 void Game::getHelp() const {
@@ -106,15 +103,14 @@ void Game::play(){
     std::string line;
     std::getline(fin, line);
     std::cout << line;
-    auto newTile = std::make_shared<Tile>(line);
-    this->tile.reset(newTile.get());
+    this->tile = Tile(line);
     fin.close();
 
     std::cout << "Welcome, hero!\n"
                  "Congratulations on being one! This is Your chance to prove that You are not in fact worthless." << std::endl;
 
     this->player.askName();
-    this->tile->tellStory();
+    this->tile.tellStory();
     std::string command;
     do {
         std::cout << ">";
@@ -123,8 +119,8 @@ void Game::play(){
             this->getHelp();
         }
         else if (std::regex_match(command, std::regex("(attack|attack +.*)", std::regex::icase))) {
-            if ((this->tile->ptrToMonster() != nullptr)){
-                if (this->tile->getMonster().getHp() <= 0) {
+            if ((this->tile.ptrToMonster() != nullptr)){
+                if (this->tile.getMonster().getHp() <= 0) {
                     std::cout << "Would You really attack a dead creature? Are You sure You are a hero?" << std::endl;
                     continue;
                 }
@@ -135,7 +131,7 @@ void Game::play(){
             }
         }
         else if (std::regex_match(command, std::regex("(story|story +.*)", std::regex::icase))) {
-            this->tile->tellStory();
+            this->tile.tellStory();
         }
         else if (std::regex_match(command, std::regex("(list|list +.*)", std::regex::icase))) {
             this->player.listInventory();
@@ -147,15 +143,15 @@ void Game::play(){
             this->player.drink();
         }
         else if (std::regex_match(command, std::regex("(shop|shop +.*)", std::regex::icase))) {
-            this->tile->listItems();
+            this->tile.listItems();
         }
-        else if (std::regex_match(command, std::regex("buy +.*", std::regex::icase))) {
-            std::string itemName = command.substr(command.find_first_not_of(' ', 3));
-            this->tile->sell(this->player, itemName);
+        else if (std::regex_match(command, std::regex("(buy|buy +.*)", std::regex::icase))) {
+            this->tile.sell(this->player);
         }
-        else if (std::regex_match(command, std::regex("sell +.*", std::regex::icase))) {
-            std::string itemName = command.substr(command.find_first_not_of(' ', 4));
-            this->tile->buy(this->player, itemName);
+        else if (std::regex_match(command, std::regex("sell +.+", std::regex::icase))) {
+            std::string itemName = command.substr(command.find_first_not_of(' ', 4), 100);
+            std::cout << itemName << "|" << std::endl;
+            this->tile.buy(this->player, itemName);
         }
         else if (std::regex_match(command, std::regex("(go|go +.*)", std::regex::icase))) {
             this->forward();

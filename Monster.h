@@ -11,16 +11,22 @@
 #include "Entity.h"
 #include "Player.h"
 
+/**
+ * Monster tha player can defeat
+ * */
 class Monster : public Entity{
 public:
-
+    ///Constructor
     Monster(std::string &name, int hp, unsigned int maxHp, unsigned int strength, unsigned int defense, int luck,
             Item &armour, Item &weapon) : Entity(name, hp, maxHp, strength, defense, luck, armour, weapon) {}
 
 
-
+    /// Drops items in players inventory
+    /// \param player Player who gets the loot
+    /// \param generator Random number generator
     void drop(Player& player, std::mt19937& generator);
 
+    ///Default destructor
     ~Monster() override = default;
 
 };
