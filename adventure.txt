@@ -1,0 +1,6 @@
+This is a test story. It serves no purpose whatsoever, other than testing. Happpy testing, lab rat.
+SHOP
+This is where the shop is. Go on, buy something.
+MONSTER
+This is the monster tile. Fight for Your life!
+END
