@@ -6,7 +6,7 @@
 #include "Game.h"
 
 
-void Game::battle() {
+bool Game::battle() {
 
     std::uniform_int_distribution<int> dis (0, this->player.getLuck());
 
@@ -25,15 +25,17 @@ void Game::battle() {
     }
     if (player.getHp() <= 0){
         std::cout << "You have died. What a shame. Time for a new test subj- I mean, hero..." << std::endl;
-        exit(0);
+        return true;
     }
     else {
         std::cout << "You have won and killed this creature. Now tell Me, who is the monster now?" << std::endl;
         tile.getMonster().drop(player, generator);
     }
+    return false;
 }
 
-void Game::forward() {
+
+void Game::forward(std::string& command) {
     std::ifstream fin;
     fin.open("adventure.txt");
     std::string line;
@@ -44,12 +46,11 @@ void Game::forward() {
 
     std::getline(fin, line);
     if (line == "SHOP") {
-        std::vector<Item> shopInventory;
-        for (int i = 0; i < 3; ++i)
-            shopInventory.emplace_back(Item("Potion", 200, 30));
+        std::vector<Item> shopInventory = {Item("Potion", 200, 30, Potion),
+                                           Item("Potion", 200, 30, Potion),
+                                           Item("Potion", 200, 30, Potion)};
         std::getline(fin, line);
         this->tile = Tile(line, shopInventory);
-
     }
     else if (line == "MONSTER") {
         std::getline(fin, line);
@@ -63,17 +64,16 @@ void Game::forward() {
         this->tile = Tile(line);
     }
     else {
-        std::cout << "End path runs" << std::endl;
         std::cout << "Wow. You have completed the test run. I guess You are a hero after all. Or a lucky bastard. "
                      "Anyways, I can't get You a trophy, if You are waiting for that, so please, just go. "
                      "I have made so that no matter what You enter, the game is over. Have a nice rest of the day!" << std::endl;
         std::string lastWord;
         std::cin >> lastWord;
         fin.close();
-        exit(0);
+        command = "exit";
+        return;
     }
     fin.close();
-
     this->tile.tellStory();
 }
 
@@ -90,8 +90,8 @@ void Game::getHelp() const {
                  "\tFinally, You can [exit] the game, if You wish to stop having fun." << std::endl;
 }
 
-void Game::play(){
-
+void Game::play() {
+    bool stillAlive = true;
     std::ifstream fin;
     fin.open("adventure.txt");
     if (!fin.is_open()) {
@@ -102,10 +102,8 @@ void Game::play(){
     std::cout << line;
     this->tile = Tile(line);
     fin.close();
-
     std::cout << "Welcome, hero!\n"
                  "Congratulations on being one! This is Your chance to prove that You are not in fact worthless." << std::endl;
-
     this->player.askName();
     this->tile.tellStory();
     std::string command;
@@ -121,7 +119,7 @@ void Game::play(){
                     std::cout << "Would You really attack a dead creature? Are You sure You are a hero?" << std::endl;
                     continue;
                 }
-                this->battle();
+                stillAlive = !this->battle();
             }
             else {
                 std::cout << "There's no monster for You to attack, You bloodthirsty madman." << std::endl;
@@ -151,11 +149,10 @@ void Game::play(){
             this->tile.buy(this->player, itemName);
         }
         else if (std::regex_match(command, std::regex("(go|go +.*)", std::regex::icase))) {
-            this->forward();
+            this->forward(command);
         }
     }
-    while (!std::regex_match(command, std::regex("(exit|exit +.*)", std::regex::icase)));
-
-    std::cout << "You have exited the game. I wanted to play, but You surely have something better to do. Well, then. Goodbye!" << std::endl;
-
+    while (!std::regex_match(command, std::regex("(exit|exit +.*)", std::regex::icase)) && stillAlive);
+    if (stillAlive)
+        std::cout << "You have exited the game. I wanted to play, but You surely have something better to do. Well, then. Goodbye!" << std::endl;
 }

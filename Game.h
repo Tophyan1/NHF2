@@ -31,14 +31,14 @@ private:
     std::mt19937 generator;
 public:
     ///Constructor
-    Game(Player &player) : player(player), tile(Tile("Init")),
+    explicit Game(Player &player) : player(player), tile(Tile("Init")),
                             generator(std::mt19937(std::chrono::high_resolution_clock::now().time_since_epoch().count())) {}
     ///Changes Tile
-    void forward();
+    void forward(std::string&);
     ///Lists possible commands to standard output
     void getHelp() const;
     ///Runs a battle between player and current monster
-    void battle();
+    bool battle();
     ///Controls Gameplay
     void play();
     ///Default Destructor

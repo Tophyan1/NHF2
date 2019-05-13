@@ -39,7 +39,7 @@ public:
                                                      defense(defense), luck(luck), armour(armour),
                                                      weapon(weapon){}
     ///Getter for name
-    std::string & getName() {
+    std::string getName() const {
         return this->name;
     }
     ///Getter/setter for HP
